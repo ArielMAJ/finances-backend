@@ -1,4 +1,4 @@
-package tech.arta.finances;
+package tech.artadevs.finances;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

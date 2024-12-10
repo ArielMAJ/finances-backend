@@ -1,4 +1,4 @@
-package tech.arta.finances.controller;
+package tech.artadevs.finances.controller;
 
 import java.util.Map;
 
