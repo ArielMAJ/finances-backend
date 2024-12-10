@@ -1,4 +1,4 @@
-package com.example.springboot_template.controller;
+package tech.arta.finances.controller;
 
 import java.util.Map;
 

@@ -1,12 +1,12 @@
-package com.example.springboot_template;
+package tech.arta.finances;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringbootTemplateApplication {
+public class SpringbootApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringbootTemplateApplication.class, args);
+		SpringApplication.run(SpringbootApplication.class, args);
 	}
 }
