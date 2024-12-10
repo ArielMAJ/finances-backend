@@ -8,11 +8,11 @@
 		<version>3.4.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>springboot-template</artifactId>
+	<groupId>tech.arta</groupId>
+	<artifactId>Finances</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springboot-template</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Finances</name>
+	<description>A finance manager backend in Java - Springboot.</description>
 	<url/>
 	<licenses>
 		<license/>

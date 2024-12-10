@@ -1,10 +1,10 @@
-package com.example.springboot_template;
+package tech.arta.finances;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringbootTemplateApplicationTests {
+class SpringbootApplicationTests {
 
 	@Test
 	void contextLoads() {
