@@ -3,6 +3,14 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      POSTGRES_HOST: database
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_CREATE_DROP: ${POSTGRES_CREATE_DROP}
+      SECRET_KEY: ${SECRET_KEY}
     ports:
       - "8080:8080"
     depends_on:
