@@ -50,14 +50,12 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	private boolean enabled = true;
 
-	
-
 	public User setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		return this;
 	}
 
-	public boolean getEnabled(){
+	public boolean getEnabled() {
 		return this.enabled;
 	}
 
@@ -119,25 +117,25 @@ public class User implements UserDetails {
 		return email;
 	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return deletedAt == null;
-    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return deletedAt == null;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return deletedAt == null;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return deletedAt == null;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return deletedAt == null;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return deletedAt == null;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return enabled && deletedAt == null;
-    }
+	@Override
+	public boolean isEnabled() {
+		return enabled && deletedAt == null;
+	}
 
 	public User setPassword(String password) {
 		this.password = password;
