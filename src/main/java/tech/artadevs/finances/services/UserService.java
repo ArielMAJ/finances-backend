@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import tech.artadevs.finances.controller.UserController;
 import tech.artadevs.finances.dtos.UserRegisterRequestDto;
 import tech.artadevs.finances.dtos.UserResponseDto;
-import tech.artadevs.finances.dtos.ValueAlreadyInUseResponseDTO;
+import tech.artadevs.finances.dtos.ValueAlreadyInUseResponseDto;
 import tech.artadevs.finances.exception.ResourceConflictException;
 import tech.artadevs.finances.models.User;
 import tech.artadevs.finances.repositories.UserRepository;
@@ -27,16 +27,16 @@ public class UserService {
     @Autowired
     private AuthenticationService authenticationService;
 
-    public ValueAlreadyInUseResponseDTO checkEmail(String email) {
+    public ValueAlreadyInUseResponseDto checkEmail(String email) {
         Optional<User> existingUserOpt = userRepository.findByEmail(email);
 
-        return new ValueAlreadyInUseResponseDTO().setAlreadyInUse(existingUserOpt.isPresent());
+        return new ValueAlreadyInUseResponseDto().setAlreadyInUse(existingUserOpt.isPresent());
     }
 
-    public ValueAlreadyInUseResponseDTO checkAccountNumber(Long accountNumber) {
+    public ValueAlreadyInUseResponseDto checkAccountNumber(Long accountNumber) {
         Optional<User> existingUserOpt = userRepository.findByAccountNumber(accountNumber);
 
-        return new ValueAlreadyInUseResponseDTO().setAlreadyInUse(existingUserOpt.isPresent());
+        return new ValueAlreadyInUseResponseDto().setAlreadyInUse(existingUserOpt.isPresent());
 
     }
 
