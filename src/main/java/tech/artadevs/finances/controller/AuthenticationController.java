@@ -1,16 +1,16 @@
 package tech.artadevs.finances.controller;
 
-import tech.artadevs.finances.models.User;
-import tech.artadevs.finances.services.AuthenticationService;
-import tech.artadevs.finances.services.JwtService;
-import tech.artadevs.finances.dtos.UserLoginRequestDto;
-import tech.artadevs.finances.dtos.UserLoginResponseDto;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import tech.artadevs.finances.dtos.UserLoginRequestDto;
+import tech.artadevs.finances.dtos.UserLoginResponseDto;
+import tech.artadevs.finances.models.User;
+import tech.artadevs.finances.services.AuthenticationService;
+import tech.artadevs.finances.services.JwtService;
 
 @RequestMapping("/auth")
 @RestController

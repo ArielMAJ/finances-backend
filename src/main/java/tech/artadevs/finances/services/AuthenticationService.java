@@ -1,13 +1,6 @@
 package tech.artadevs.finances.services;
 
-import tech.artadevs.finances.dtos.UserLoginRequestDto;
-import tech.artadevs.finances.exception.ResourceNotFoundException;
-import tech.artadevs.finances.models.User;
-import tech.artadevs.finances.repositories.UserRepository;
-
 import java.util.Optional;
-
-import javax.naming.AuthenticationException;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,6 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import tech.artadevs.finances.dtos.UserLoginRequestDto;
+import tech.artadevs.finances.exception.ResourceNotFoundException;
+import tech.artadevs.finances.models.User;
+import tech.artadevs.finances.repositories.UserRepository;
 
 @Service
 public class AuthenticationService {

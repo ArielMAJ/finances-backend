@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
-import tech.artadevs.finances.exception.ApiError;
+import tech.artadevs.finances.dtos.ApiErrorDto;
 
 @Controller
 public class CustomErrorController implements ErrorController {
@@ -15,8 +15,8 @@ public class CustomErrorController implements ErrorController {
     }
 
     @RequestMapping("/error")
-    public ResponseEntity<ApiError> handleError(WebRequest webRequest) {
+    public ResponseEntity<ApiErrorDto> handleError(WebRequest webRequest) {
         return ResponseEntity.status(HttpStatus.valueOf(404))
-                .body(new ApiError("Access /docs to see the API documentation."));
+                .body(new ApiErrorDto("Access /docs to see the API documentation."));
     }
 }
