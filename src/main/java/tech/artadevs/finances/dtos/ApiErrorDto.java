@@ -1,10 +1,10 @@
-package tech.artadevs.finances.exception;
+package tech.artadevs.finances.dtos;
 
-public class ApiError {
+public class ApiErrorDto {
 
     private String detail;
 
-    public ApiError(String detail) {
+    public ApiErrorDto(String detail) {
         this.detail = detail;
     }
 
