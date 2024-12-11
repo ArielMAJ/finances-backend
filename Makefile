@@ -16,6 +16,10 @@ recreate: down ## Rebuild and recreate all containers.
 run: ## Run the project locally.
 	./mvnw spring-boot:run
 
+.PHONY: install
+install: ## Install dependencies
+	mvn clean install
+
 .PHONY: up-database
 up-database: ## Start database container.
 	docker compose up -d database --force-recreate
