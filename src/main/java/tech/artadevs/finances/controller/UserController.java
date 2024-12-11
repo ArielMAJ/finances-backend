@@ -1,10 +1,11 @@
 
 package tech.artadevs.finances.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,26 +23,25 @@ import tech.artadevs.finances.dtos.ValueAlreadyInUseResponseDto;
 import tech.artadevs.finances.services.AuthenticationService;
 import tech.artadevs.finances.services.UserService;
 
+@Validated
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    public UserResponseDto signup(@RequestBody UserRegisterRequestDto user) {
+    public UserResponseDto signup(@Valid @RequestBody UserRegisterRequestDto user) {
         return userService.signup(user);
     }
 
     @PutMapping("/me")
     @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto updateCurrentUser(@RequestBody UserRegisterRequestDto updatedUser) {
+    public UserResponseDto updateCurrentUser(@Valid @RequestBody UserRegisterRequestDto updatedUser) {
         return userService.updateCurrentUser(updatedUser);
     }
 
