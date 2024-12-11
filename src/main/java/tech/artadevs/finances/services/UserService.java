@@ -56,7 +56,6 @@ public class UserService {
         newUser = userRepository.save(newUser);
         logger.info("Sign up completed for {}", newUser.getEmail());
         return getUserResponseDto(newUser);
-
     }
 
     private void validateAccountNumberNotAlreadyInUse(UserRegisterRequestDto userDTO) {
