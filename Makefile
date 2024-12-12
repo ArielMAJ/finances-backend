@@ -10,7 +10,7 @@ down: ## Stop all containers.
 	docker compose down
 
 recreate: down ## Rebuild and recreate all containers.
-	docker compose up --build --force-recreate
+	docker compose up --build --force-recreate -d
 
 .PHONY: run
 run: ## Run the project locally.

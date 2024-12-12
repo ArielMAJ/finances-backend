@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import tech.artadevs.finances.dtos.FinancialTransactionRequestDto;
 import tech.artadevs.finances.dtos.FinancialTransactionResponseDto;
 import tech.artadevs.finances.services.FinancialTransactionService;
@@ -30,8 +32,23 @@ public class FinancialTransactionController {
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
     public FinancialTransactionResponseDto createTransaction(
-            @RequestBody FinancialTransactionRequestDto financialTransactionRequest) {
+            @Valid @RequestBody FinancialTransactionRequestDto financialTransactionRequest) {
         return financialTransactionService.create(financialTransactionRequest);
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    public void updateTransaction(@PathVariable Long id,
+            @Valid @RequestBody FinancialTransactionRequestDto financialTransactionRequest) {
+        financialTransactionService.update(id, financialTransactionRequest);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    public FinancialTransactionResponseDto getUserTransactionById(@PathVariable Long id) {
+        return financialTransactionService.getOwnById(id);
     }
 
     @GetMapping
