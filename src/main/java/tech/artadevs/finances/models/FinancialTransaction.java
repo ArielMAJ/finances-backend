@@ -121,6 +121,9 @@ public class FinancialTransaction {
         return new FinancialTransactionResponseDto()
                 .setId(id)
                 .setDescription(description)
-                .setValue(value);
+                .setValue(value)
+                .setCreatedAt(createdAt)
+                .setUpdatedAt(updatedAt);
+
     }
 }

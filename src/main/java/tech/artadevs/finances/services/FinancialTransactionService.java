@@ -1,6 +1,7 @@
 
 package tech.artadevs.finances.services;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +40,30 @@ public class FinancialTransactionService {
                 .setUser(currentUser);
 
         newFinancialTransaction = financialTransactionRepository.save(newFinancialTransaction);
-        logger.info("New financial transaction, with id={}, created for user={},", newFinancialTransaction.getId());
+        logger.info("New financial transaction, with id={}, created for user={}.",
+                newFinancialTransaction.getId(),
+                currentUser.getEmail());
         return newFinancialTransaction.toFinancialTransactionResponseDto();
+    }
+
+    public void update(Long id, FinancialTransactionRequestDto financialTransactionRequest) {
+        User currentUser = authenticationService.getCurrentUser();
+        logger.info("Financial transaction update request for id={} from user={}",
+                id, currentUser.getEmail());
+
+        Optional<FinancialTransaction> OptFinancialTransaction = financialTransactionRepository.findByIdAndUser(
+                id,
+                currentUser);
+        if (OptFinancialTransaction.isEmpty()) {
+            throw new ResourceNotFoundException("Financial Transaction");
+        }
+        FinancialTransaction financialTransaction = OptFinancialTransaction.get()
+                .setValue(financialTransactionRequest.getValue())
+                .setDescription(financialTransactionRequest.getDescription());
+
+        financialTransactionRepository.save(financialTransaction);
+        logger.info("Financial transaction updated for id={} and user={},", financialTransaction.getId(),
+                currentUser.getEmail());
     }
 
     public List<FinancialTransactionResponseDto> listAllForCurrentUser() {
@@ -49,6 +72,7 @@ public class FinancialTransactionService {
         return financialTransactionRepository.findByUser(currentUser)
                 .stream()
                 .map(FinancialTransaction::toFinancialTransactionResponseDto)
+                .sorted(Comparator.comparing(FinancialTransactionResponseDto::getCreatedAt).reversed())
                 .toList();
     }
 
@@ -62,9 +86,21 @@ public class FinancialTransactionService {
                 .sum();
     }
 
+    public FinancialTransactionResponseDto getOwnById(Long id) {
+        User currentUser = authenticationService.getCurrentUser();
+        Optional<FinancialTransaction> optFinancialTransaction = financialTransactionRepository.findByIdAndUser(
+                id,
+                currentUser);
+        if (optFinancialTransaction.isEmpty())
+            throw new ResourceNotFoundException("Financial Transaction");
+
+        return optFinancialTransaction.get().toFinancialTransactionResponseDto();
+    }
+
     public void deleteOwnItemById(Long id) {
         User currentUser = authenticationService.getCurrentUser();
-        Optional<FinancialTransaction> optFinancialTransaction = financialTransactionRepository.findByIdAndUser(id,
+        Optional<FinancialTransaction> optFinancialTransaction = financialTransactionRepository.findByIdAndUser(
+                id,
                 currentUser);
         if (optFinancialTransaction.isEmpty())
             throw new ResourceNotFoundException("Financial Transaction");
