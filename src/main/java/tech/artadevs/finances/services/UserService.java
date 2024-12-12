@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public UserResponseDto signup(UserRegisterRequestDto userDTO) {
-        logger.info("Signup request: {} {}", userDTO.getName(), userDTO.getEmail());
+        logger.info("Signup request: '{}' '{}'", userDTO.getName(), userDTO.getEmail());
 
         validateEmailNotAlreadyInUse(userDTO);
         validateAccountNumberNotAlreadyInUse(userDTO);
@@ -54,7 +54,7 @@ public class UserService {
                 .setPassword(authenticationService.encodePassword(userDTO.getPassword()));
 
         newUser = userRepository.save(newUser);
-        logger.info("Sign up completed for {}", newUser.getEmail());
+        logger.info("Sign up completed for '{}'", newUser.getEmail());
         return getUserResponseDto(newUser);
     }
 
@@ -86,13 +86,15 @@ public class UserService {
     }
 
     public UserResponseDto updateCurrentUser(UserRegisterRequestDto updatedUser) {
-        logger.info("Update request: {} {}", updatedUser.getName(), updatedUser.getEmail());
+        logger.info("Update request: '{}' '{}'", updatedUser.getName(), updatedUser.getEmail());
         User currentUser = authenticationService.getCurrentUser();
 
         if (!currentUser.getEmail().equalsIgnoreCase(updatedUser.getEmail())) {
+            logger.info("Emails are different: 1. '{}' vs 2. '{}'", currentUser.getEmail(), updatedUser.getEmail());
             validateEmailNotAlreadyInUse(updatedUser);
         }
-        if (currentUser.getAccountNumber() != updatedUser.getAccountNumber()) {
+        if (!currentUser.getAccountNumber().equals(updatedUser.getAccountNumber())) {
+            logger.info("Account numbers are different: 1. '{}' vs 2. '{}'", currentUser.getAccountNumber(), updatedUser.getAccountNumber());
             validateAccountNumberNotAlreadyInUse(updatedUser);
         }
 
@@ -107,7 +109,7 @@ public class UserService {
 
     public void deleteAuthenticatedUser() {
         User currentUser = authenticationService.getCurrentUser();
-        logger.info("Delete request: {} {}", currentUser.getName(), currentUser.getEmail());
+        logger.info("Delete request: '{}' '{}'", currentUser.getName(), currentUser.getEmail());
 
         currentUser.setDeletedAt(new Date());
         currentUser.setEnabled(false);

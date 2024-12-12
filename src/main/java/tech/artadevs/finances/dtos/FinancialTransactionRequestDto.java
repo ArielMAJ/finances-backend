@@ -1,7 +1,5 @@
 package tech.artadevs.finances.dtos;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -10,9 +8,7 @@ public class FinancialTransactionRequestDto {
 
 	private Double value;
 
-	@SuppressWarnings("deprecation")
-	@NotEmpty(message = "The description is required.")
-	@Size(min = 2, max = 100, message = "The length of description must be between 2 and 100 characters.")
+	@Size(max = 100, message = "The length of description must be at most 100 characters.")
 	private String description;
 
 	public FinancialTransactionRequestDto() {
