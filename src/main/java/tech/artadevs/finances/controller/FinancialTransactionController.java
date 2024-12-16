@@ -60,7 +60,7 @@ public class FinancialTransactionController {
     @GetMapping("/total")
     @SecurityRequirement(name = "bearerAuth")
     public Double calculateTotalTransactionsValue() {
-        return financialTransactionService.calculateTotalTransactionValueForCurrentUser();
+        return financialTransactionService.getCurrentUserTransactionsTotalValue();
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
