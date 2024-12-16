@@ -76,14 +76,10 @@ public class FinancialTransactionService {
                 .toList();
     }
 
-    public double calculateTotalTransactionValueForCurrentUser() {
+    public Double getCurrentUserTransactionsTotalValue() {
         User currentUser = authenticationService.getCurrentUser();
         logger.info("Calculating total financial transaction value for user={}", currentUser.getEmail());
-        List<FinancialTransaction> transactions = financialTransactionRepository.findByUser(currentUser);
-        return transactions
-                .stream()
-                .mapToDouble(FinancialTransaction::getValue)
-                .sum();
+        return financialTransactionRepository.getUserTransactionsTotalValue(currentUser);
     }
 
     public FinancialTransactionResponseDto getOwnById(Long id) {

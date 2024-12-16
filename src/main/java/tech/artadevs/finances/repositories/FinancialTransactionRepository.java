@@ -16,4 +16,6 @@ public interface FinancialTransactionRepository extends JpaRepository<FinancialT
 
     Optional<FinancialTransaction> findByIdAndUser(Long id, User user);
 
+    @Query("SELECT SUM(ft.value) FROM FinancialTransaction ft WHERE ft.user = :user AND ft.deletedAt IS NULL")
+    Double getUserTransactionsTotalValue(User user);
 }
