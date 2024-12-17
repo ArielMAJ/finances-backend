@@ -20,9 +20,17 @@ run: ## Run the project locally.
 install: ## Install dependencies
 	mvn clean install
 
+.PHONY: test
+test: ## Run tests. Make sure to have the test database up.
+	mvn clean test
+
 .PHONY: up-database
 up-database: ## Start database container.
 	docker compose up -d database --force-recreate
+
+.PHONY: up-database
+up-test-database: ## Start test database container.
+	docker compose -f docker-compose-test.yaml up -d test-database --force-recreate
 
 .DEFAULT_GOAL := help
 help:

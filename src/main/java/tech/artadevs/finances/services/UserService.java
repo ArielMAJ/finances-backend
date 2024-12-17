@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tech.artadevs.finances.controller.UserController;
+import tech.artadevs.finances.controllers.UserController;
 import tech.artadevs.finances.dtos.UserRegisterRequestDto;
 import tech.artadevs.finances.dtos.UserResponseDto;
 import tech.artadevs.finances.dtos.ValueAlreadyInUseResponseDto;
@@ -94,7 +94,8 @@ public class UserService {
             validateEmailNotAlreadyInUse(updatedUser);
         }
         if (!currentUser.getAccountNumber().equals(updatedUser.getAccountNumber())) {
-            logger.info("Account numbers are different: 1. '{}' vs 2. '{}'", currentUser.getAccountNumber(), updatedUser.getAccountNumber());
+            logger.info("Account numbers are different: 1. '{}' vs 2. '{}'", currentUser.getAccountNumber(),
+                    updatedUser.getAccountNumber());
             validateAccountNumberNotAlreadyInUse(updatedUser);
         }
 
