@@ -1,4 +1,4 @@
-package tech.artadevs.finances.controller;
+package tech.artadevs.finances.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,7 @@ import tech.artadevs.finances.services.JwtService;
 @RestController
 public class AuthenticationController {
     private final JwtService jwtService;
-    
+
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
@@ -30,7 +30,8 @@ public class AuthenticationController {
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        UserLoginResponseDto loginResponse = new UserLoginResponseDto().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
+        UserLoginResponseDto loginResponse = new UserLoginResponseDto().setToken(jwtToken)
+                .setExpiresIn(jwtService.getExpirationTime());
 
         return ResponseEntity.ok(loginResponse);
     }
