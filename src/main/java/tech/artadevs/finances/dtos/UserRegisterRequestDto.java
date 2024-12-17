@@ -42,39 +42,44 @@ public class UserRegisterRequestDto {
 		return name;
 	}
 
-	public void setName(String name) {
+	public UserRegisterRequestDto setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(Integer age) {
+	public UserRegisterRequestDto setAge(Integer age) {
 		this.age = age;
+		return this;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public UserRegisterRequestDto setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 
 	public Long getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(Long accountNumber) {
+	public UserRegisterRequestDto setAccountNumber(Long accountNumber) {
 		this.accountNumber = accountNumber;
+		return this;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public UserRegisterRequestDto setPassword(String password) {
 		this.password = password;
+		return this;
 	}
 }

@@ -10,4 +10,8 @@ class SpringbootApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void testMainMethod() {
+		SpringbootApplication.main(new String[] {});
+	}
 }

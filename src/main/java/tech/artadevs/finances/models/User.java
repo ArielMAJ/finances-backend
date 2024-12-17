@@ -66,6 +66,11 @@ public class User implements UserDetails {
 		return id;
 	}
 
+	public User setId(Long id) {
+		this.id = id;
+		return this;
+	}
+
 	public String getName() {
 		return name;
 	}

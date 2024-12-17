@@ -11,15 +11,17 @@ public class UserLoginRequestDto {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public UserLoginRequestDto setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public UserLoginRequestDto setPassword(String password) {
 		this.password = password;
+		return this;
 	}
 }

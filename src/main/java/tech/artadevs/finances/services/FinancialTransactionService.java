@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tech.artadevs.finances.controller.UserController;
+import tech.artadevs.finances.controllers.UserController;
 import tech.artadevs.finances.dtos.FinancialTransactionRequestDto;
 import tech.artadevs.finances.dtos.FinancialTransactionResponseDto;
 import tech.artadevs.finances.exception.ResourceNotFoundException;

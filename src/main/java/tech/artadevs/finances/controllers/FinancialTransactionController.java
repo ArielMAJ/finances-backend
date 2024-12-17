@@ -1,4 +1,4 @@
-package tech.artadevs.finances.controller;
+package tech.artadevs.finances.controllers;
 
 import java.util.List;
 
