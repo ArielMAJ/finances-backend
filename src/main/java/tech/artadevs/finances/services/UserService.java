@@ -88,6 +88,8 @@ public class UserService {
     public UserResponseDto updateCurrentUser(UserRegisterRequestDto updatedUser) {
         logger.info("Update request: '{}' '{}'", updatedUser.getName(), updatedUser.getEmail());
         User currentUser = authenticationService.getCurrentUser();
+        logger.info("Update request: '{}' '{}' | Got current user: '{}' '{}'", updatedUser.getName(),
+                updatedUser.getEmail(), currentUser.getName(), currentUser.getEmail());
 
         if (!currentUser.getEmail().equalsIgnoreCase(updatedUser.getEmail())) {
             logger.info("Emails are different: 1. '{}' vs 2. '{}'", currentUser.getEmail(), updatedUser.getEmail());
@@ -105,6 +107,7 @@ public class UserService {
                 .setEmail(updatedUser.getEmail())
                 .setAccountNumber(updatedUser.getAccountNumber())
                 .setPassword(authenticationService.encodePassword(updatedUser.getPassword()));
+        logger.info("Update request '{}' '{}' | Saving updated user", updatedUser.getName(), updatedUser.getEmail());
         return getUserResponseDto(userRepository.save(currentUser));
     }
 
