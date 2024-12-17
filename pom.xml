@@ -11,7 +11,7 @@
     </parent>
     <groupId>tech.artadevs</groupId>
     <artifactId>Finances</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.5.1-SNAPSHOT</version>
     <name>Finances</name>
     <description>A finance manager backend in Java - Springboot.</description>
     <url />
