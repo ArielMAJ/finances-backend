@@ -4,7 +4,7 @@
   "outputDirectory": "target",
   "functions": {
     "src/**/*.java": {
-      "runtime": "vercel-java@21",
+      "runtime": "vercel-java@1.0.0",
       "memory": 512,
       "maxDuration": 10
     }
