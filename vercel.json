@@ -3,7 +3,7 @@
   "buildCommand": "mvn clean package",
   "outputDirectory": "target",
   "functions": {
-    "src/**/*.java": {
+    "api/**/*.java": {
       "runtime": "vercel-java@1.0.0",
       "memory": 512,
       "maxDuration": 10
@@ -11,8 +11,8 @@
   },
   "routes": [
     {
-      "src": "/src/(.*)",
-      "dest": "/src/$1.java"
+      "src": "/api/(.*)",
+      "dest": "/api/$1.java"
     }
   ]
 }
