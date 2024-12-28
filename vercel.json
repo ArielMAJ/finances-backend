@@ -1,15 +1,18 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "pom.xml",
-      "use": "@vercel/java"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "mvn clean package",
+  "outputDirectory": "target",
+  "functions": {
+    "src/**/*.java": {
+      "runtime": "java21",
+      "memory": 512,
+      "maxDuration": 10
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/pom.xml"
+      "src": "/src/(.*)",
+      "dest": "/src/$1.java"
     }
   ]
 }
