@@ -1,16 +1,19 @@
+CONTAINER_ENGINE := $(shell which podman || which docker)
+COMPOSE := $(CONTAINER_ENGINE) compose
+
 ifneq ("$(wildcard .env)","")
 	include .env
 	export
 endif
 
-up: ## Start all containers with docker compose.
-	docker compose up -d --force-recreate
+up: ## Start all containers with the available container engine.
+	$(COMPOSE) up -d --force-recreate
 
 down: ## Stop all containers.
-	docker compose down
+	$(COMPOSE) down
 
 recreate: down ## Rebuild and recreate all containers.
-	docker compose up --build --force-recreate -d
+	$(COMPOSE) up --build --force-recreate -d
 
 .PHONY: run
 run: ## Run the project locally.
@@ -26,11 +29,15 @@ test: ## Run tests. Make sure to have the test database up.
 
 .PHONY: up-database
 up-database: ## Start database container.
-	docker compose up -d database --force-recreate
+	$(COMPOSE) up -d database --force-recreate
 
-.PHONY: up-database
+.PHONY: up-test-database
 up-test-database: ## Start test database container.
-	docker compose -f docker-compose-test.yaml up -d test-database --force-recreate
+	$(COMPOSE) -f docker-compose-test.yaml up -d test-database --force-recreate
+
+.PHONY: generate-secret-key
+generate-secret-key:
+	@node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 .DEFAULT_GOAL := help
 help:
