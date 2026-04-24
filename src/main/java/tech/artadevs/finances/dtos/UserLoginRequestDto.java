@@ -1,7 +1,13 @@
 package tech.artadevs.finances.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UserLoginRequestDto {
+
+	@NotBlank(message = "The email address is required.")
 	private String email;
+
+	@NotBlank(message = "The password is required.")
 	private String password;
 
 	public UserLoginRequestDto() {

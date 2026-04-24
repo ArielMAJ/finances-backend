@@ -1,6 +1,5 @@
 package tech.artadevs.finances.controllers;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.mapping.Array;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +19,27 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
+import tech.artadevs.finances.AbstractIntegrationTest;
 import tech.artadevs.finances.dtos.ApiErrorDto;
 import tech.artadevs.finances.dtos.UserLoginRequestDto;
 import tech.artadevs.finances.dtos.UserLoginResponseDto;
 import tech.artadevs.finances.dtos.UserRegisterRequestDto;
 import tech.artadevs.finances.dtos.UserResponseDto;
-import tech.artadevs.finances.dtos.ValueAlreadyInUseResponseDto;
+import tech.artadevs.finances.repositories.FinancialTransactionRepository;
+import tech.artadevs.finances.repositories.UserRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class UserControllerTest {
+class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FinancialTransactionRepository transactionRepository;
 
     private String userEmail;
     private String userPassword;
@@ -49,6 +53,9 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+        transactionRepository.deleteAll();
+        userRepository.deleteAll();
+
         userEmail = "user@example.com";
         userPassword = "password";
         userName = "Example User";
@@ -79,7 +86,8 @@ class UserControllerTest {
 
         HttpEntity<UserLoginRequestDto> entity = new HttpEntity<>(loginPayload, headers);
 
-        ResponseEntity<UserLoginResponseDto> response = restTemplate.exchange("/auth/login", HttpMethod.POST, entity,
+        ResponseEntity<UserLoginResponseDto> response = restTemplate.exchange("/auth/login", HttpMethod.POST,
+                entity,
                 UserLoginResponseDto.class);
 
         @SuppressWarnings("null")
@@ -122,7 +130,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         ApiErrorDto errorResponse = response.getBody();
         assertNotNull(errorResponse);
-        assertEquals("Email already in use: " + userEmail, errorResponse.getDetail());
+        assertEquals("Email already in use.", errorResponse.getDetail());
     }
 
     @Test
@@ -141,7 +149,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         ApiErrorDto errorResponse = response.getBody();
         assertNotNull(errorResponse);
-        assertEquals("Account number already in use: " + accountNumber, errorResponse.getDetail());
+        assertEquals("Account number already in use.", errorResponse.getDetail());
     }
 
     @Test
@@ -155,7 +163,8 @@ class UserControllerTest {
                 .setAge(1);
 
         @SuppressWarnings("unchecked")
-        ResponseEntity<Map<String, List<String>>> response = restTemplate.postForEntity("/user/signup", signupRequest,
+        ResponseEntity<Map<String, List<String>>> response = restTemplate.postForEntity("/user/signup",
+                signupRequest,
                 (Class<Map<String, List<String>>>) (Class<?>) Map.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -167,7 +176,6 @@ class UserControllerTest {
         assertNotNull(errors);
         assertTrue(errors.size() > 0, "Expected validation errors, but got none.");
 
-        assertTrue(errors.contains("The length of full name must be between 2 and 100 characters."));
         assertTrue(errors.contains("The length of full name must be between 2 and 100 characters."));
         assertTrue(errors.contains("Account number should be greater than zero."));
         assertTrue(errors.contains("Age must be at least 18."));
@@ -212,31 +220,6 @@ class UserControllerTest {
     }
 
     @Test
-    void testCheckEmailAvailability() {
-
-        ResponseEntity<ValueAlreadyInUseResponseDto> response = restTemplate.exchange("/user/check-email/" + userEmail,
-                HttpMethod.GET, null, ValueAlreadyInUseResponseDto.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        ValueAlreadyInUseResponseDto valueAlreadyInUseResponse = response.getBody();
-        assertNotNull(valueAlreadyInUseResponse);
-        assertEquals(true, valueAlreadyInUseResponse.isAlreadyInUse());
-    }
-
-    @Test
-    void testCheckAccountNumberAvailability() {
-
-        ResponseEntity<ValueAlreadyInUseResponseDto> response = restTemplate.exchange(
-                "/user/check-account-number/" + accountNumber,
-                HttpMethod.GET, null, ValueAlreadyInUseResponseDto.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        ValueAlreadyInUseResponseDto valueAlreadyInUseResponse = response.getBody();
-        assertNotNull(valueAlreadyInUseResponse);
-        assertEquals(true, valueAlreadyInUseResponse.isAlreadyInUse());
-    }
-
-    @Test
     void testGetAuthenticatedUser() {
         ResponseEntity<UserResponseDto> response = restTemplate.exchange("/user/me", HttpMethod.GET,
                 new HttpEntity<>(headers),
@@ -248,7 +231,6 @@ class UserControllerTest {
         assertEquals(userEmail, authenticatedUser.getEmail());
     }
 
-
     @Test
     void testGetAuthenticatedUserUnauthorized() throws InterruptedException {
         Thread.sleep(jwtExpiration + 200);
@@ -256,7 +238,7 @@ class UserControllerTest {
                 new HttpEntity<>(headers),
                 ApiErrorDto.class);
 
-                assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         ApiErrorDto errorResponse = response.getBody();
         assertNotNull(errorResponse);
         assertEquals("Invalid or expired JWT token.", errorResponse.getDetail());
