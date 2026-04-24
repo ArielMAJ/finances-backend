@@ -17,7 +17,7 @@ recreate: down ## Rebuild and recreate all containers.
 
 .PHONY: run
 run: ## Run the project locally.
-	./mvnw spring-boot:run
+	mvn spring-boot:run
 
 .PHONY: install
 install: ## Install dependencies
@@ -38,6 +38,17 @@ up-test-database: ## Start test database container.
 .PHONY: generate-secret-key
 generate-secret-key:
 	@node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+.PHONY: setup-env
+setup-env: ## Create .env from .env.example and generate a SECRET_KEY.
+	@if [ -f .env ]; then \
+		echo ".env already exists. Remove it first if you want to regenerate."; \
+		exit 1; \
+	fi
+	@cp .env.example .env
+	@SECRET=$$(node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))"); \
+	perl -i -pe "s/^SECRET_KEY=.*/SECRET_KEY=$$SECRET/" .env
+	@echo ".env created with a generated SECRET_KEY."
 
 .DEFAULT_GOAL := help
 help:

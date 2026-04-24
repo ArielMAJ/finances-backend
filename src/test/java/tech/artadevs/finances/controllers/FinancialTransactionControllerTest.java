@@ -15,8 +15,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
+import tech.artadevs.finances.AbstractIntegrationTest;
 import tech.artadevs.finances.dtos.ApiErrorDto;
 import tech.artadevs.finances.dtos.FinancialTransactionRequestDto;
 import tech.artadevs.finances.dtos.FinancialTransactionResponseDto;
@@ -24,13 +24,20 @@ import tech.artadevs.finances.dtos.UserLoginRequestDto;
 import tech.artadevs.finances.dtos.UserLoginResponseDto;
 import tech.artadevs.finances.dtos.UserRegisterRequestDto;
 import tech.artadevs.finances.dtos.UserResponseDto;
+import tech.artadevs.finances.repositories.FinancialTransactionRepository;
+import tech.artadevs.finances.repositories.UserRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class FinancialTransactionControllerTest {
+class FinancialTransactionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FinancialTransactionRepository transactionRepository;
 
     private String userEmail;
     private String userPassword;
@@ -41,6 +48,9 @@ class FinancialTransactionControllerTest {
 
     @BeforeEach
     void setUp() {
+        transactionRepository.deleteAll();
+        userRepository.deleteAll();
+
         userEmail = "user@example.com";
         userPassword = "password";
         userName = "Example User";
@@ -71,7 +81,8 @@ class FinancialTransactionControllerTest {
 
         HttpEntity<UserLoginRequestDto> entity = new HttpEntity<>(loginPayload, headers);
 
-        ResponseEntity<UserLoginResponseDto> response = restTemplate.exchange("/auth/login", HttpMethod.POST, entity,
+        ResponseEntity<UserLoginResponseDto> response = restTemplate.exchange("/auth/login", HttpMethod.POST,
+                entity,
                 UserLoginResponseDto.class);
 
         @SuppressWarnings("null")
@@ -158,7 +169,6 @@ class FinancialTransactionControllerTest {
         assertEquals("Get Test Transaction", transaction.getDescription());
     }
 
-
     @Test
     void testGetTransactionByIdWhenNoTransactionExists() {
         ResponseEntity<ApiErrorDto> getResponse = restTemplate.exchange(
@@ -182,7 +192,8 @@ class FinancialTransactionControllerTest {
             ResponseEntity<FinancialTransactionResponseDto> createResponse = restTemplate.postForEntity(
                     "/user/me/transactions", entity, FinancialTransactionResponseDto.class);
 
-            assertEquals(HttpStatus.OK, createResponse.getStatusCode(), "Transaction creation failed for index: " + i);
+            assertEquals(HttpStatus.OK, createResponse.getStatusCode(),
+                    "Transaction creation failed for index: " + i);
             assertNotNull(createResponse.getBody(), "Response body is null for transaction index: " + i);
         }
 
@@ -204,7 +215,8 @@ class FinancialTransactionControllerTest {
                     .setValue(10.0 * i)
                     .setDescription("Transaction " + i);
             HttpEntity<FinancialTransactionRequestDto> entity = new HttpEntity<>(request, headers);
-            restTemplate.postForEntity("/user/me/transactions", entity, FinancialTransactionResponseDto.class);
+            restTemplate.postForEntity("/user/me/transactions", entity,
+                    FinancialTransactionResponseDto.class);
         }
 
         ResponseEntity<Double> response = restTemplate.exchange(
@@ -231,7 +243,8 @@ class FinancialTransactionControllerTest {
         Long transactionId = financialTransactionResponseDto.getId();
 
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
-                "/user/me/transactions/" + transactionId, HttpMethod.DELETE, new HttpEntity<>(headers), Void.class);
+                "/user/me/transactions/" + transactionId, HttpMethod.DELETE, new HttpEntity<>(headers),
+                Void.class);
 
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
 

@@ -1,5 +1,6 @@
 package tech.artadevs.finances.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDto> authenticate(@RequestBody UserLoginRequestDto loginUserDto) {
+    public ResponseEntity<UserLoginResponseDto> authenticate(@Valid @RequestBody UserLoginRequestDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tech.artadevs.finances.controllers.UserController;
 import tech.artadevs.finances.dtos.UserRegisterRequestDto;
 import tech.artadevs.finances.dtos.UserResponseDto;
 import tech.artadevs.finances.dtos.ValueAlreadyInUseResponseDto;
@@ -19,7 +18,7 @@ import tech.artadevs.finances.repositories.UserRepository;
 
 @Service
 public class UserService {
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -60,17 +59,15 @@ public class UserService {
 
     private void validateAccountNumberNotAlreadyInUse(UserRegisterRequestDto userDTO) {
         if (checkAccountNumber(userDTO.getAccountNumber()).isAlreadyInUse()) {
-            String errorMessage = "Account number already in use: " + userDTO.getAccountNumber();
-            logger.error(errorMessage);
-            throw new ResourceConflictException(errorMessage);
+            logger.error("Account number already in use: {}", userDTO.getAccountNumber());
+            throw new ResourceConflictException("Account number already in use.");
         }
     }
 
     private void validateEmailNotAlreadyInUse(UserRegisterRequestDto userDTO) {
         if (checkEmail(userDTO.getEmail()).isAlreadyInUse()) {
-            String errorMessage = "Email already in use: " + userDTO.getEmail();
-            logger.error(errorMessage);
-            throw new ResourceConflictException(errorMessage);
+            logger.error("Email already in use: {}", userDTO.getEmail());
+            throw new ResourceConflictException("Email already in use.");
         }
     }
 

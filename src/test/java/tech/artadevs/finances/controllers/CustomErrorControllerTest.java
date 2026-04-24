@@ -10,10 +10,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import tech.artadevs.finances.AbstractIntegrationTest;
 import tech.artadevs.finances.dtos.ApiErrorDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CustomErrorControllerTest {
+class CustomErrorControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -26,6 +27,6 @@ class CustomErrorControllerTest {
 
         ApiErrorDto apiErrorDto = response.getBody();
         assertNotNull(apiErrorDto);
-        assertEquals("Access /docs to see the API documentation.", apiErrorDto.getDetail());
+        assertEquals("Not found.", apiErrorDto.getDetail());
     }
 }

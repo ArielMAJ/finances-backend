@@ -17,6 +17,7 @@ public class UserRegisterRequestDto {
 	@Size(min = 2, max = 100, message = "The length of full name must be between 2 and 100 characters.")
 	private String name;
 
+	@NotNull(message = "The age is required.")
 	@Min(value = 18, message = "Age must be at least 18.")
 	@Max(value = 120, message = "Age must not exceed 120.")
 	private Integer age;
