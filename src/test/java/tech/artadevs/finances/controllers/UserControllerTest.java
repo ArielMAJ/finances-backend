@@ -177,7 +177,6 @@ class UserControllerTest extends AbstractIntegrationTest {
         assertTrue(errors.size() > 0, "Expected validation errors, but got none.");
 
         assertTrue(errors.contains("The length of full name must be between 2 and 100 characters."));
-        assertTrue(errors.contains("The length of full name must be between 2 and 100 characters."));
         assertTrue(errors.contains("Account number should be greater than zero."));
         assertTrue(errors.contains("Age must be at least 18."));
     }
