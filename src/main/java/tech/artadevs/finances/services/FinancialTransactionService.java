@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tech.artadevs.finances.controllers.UserController;
 import tech.artadevs.finances.dtos.FinancialTransactionRequestDto;
 import tech.artadevs.finances.dtos.FinancialTransactionResponseDto;
 import tech.artadevs.finances.exception.ResourceNotFoundException;
@@ -21,7 +20,7 @@ import tech.artadevs.finances.repositories.FinancialTransactionRepository;
 
 @Service
 public class FinancialTransactionService {
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FinancialTransactionService.class);
 
     @Autowired
     private AuthenticationService authenticationService;

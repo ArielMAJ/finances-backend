@@ -1,11 +1,13 @@
 package tech.artadevs.finances.dtos;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class FinancialTransactionRequestDto {
 
+	@NotNull(message = "The transaction value is required.")
 	private Double value;
 
 	@Size(max = 100, message = "The length of description must be at most 100 characters.")

@@ -4,47 +4,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import tech.artadevs.finances.models.User;
 
-@SpringBootTest
-@PropertySource("classpath:application.properties")
+@ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
+
+    private static final String SECRET_KEY = "7cafe70f72be6ac77d2772b7b267c2da11e7f7087b77bb17c6c517786787b77";
+    private static final long JWT_EXPIRATION = 1500L;
 
     private JwtService jwtService;
 
     @Mock
     private User mockUser;
 
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
-
-    @Value("${security.jwt.expiration-time}")
-    private long jwtExpiration;
-
     @BeforeEach
     void setUp() throws Exception {
         jwtService = new JwtService();
         Field secretKeyField = JwtService.class.getDeclaredField("secretKey");
         secretKeyField.setAccessible(true);
-        secretKeyField.set(jwtService, secretKey);
+        secretKeyField.set(jwtService, SECRET_KEY);
 
         Field jwtExpirationField = JwtService.class.getDeclaredField("jwtExpiration");
         jwtExpirationField.setAccessible(true);
-        jwtExpirationField.set(jwtService, jwtExpiration);
+        jwtExpirationField.set(jwtService, JWT_EXPIRATION);
 
-        when(mockUser.getUsername()).thenReturn("defaultUser");
+        lenient().when(mockUser.getUsername()).thenReturn("defaultUser");
     }
 
     @Test
@@ -66,7 +62,7 @@ class JwtServiceTest {
 
     @Test
     void testGetExpirationTime() {
-        assertEquals(jwtService.getExpirationTime(), jwtExpiration);
+        assertEquals(jwtService.getExpirationTime(), JWT_EXPIRATION);
     }
 
     @Test
@@ -92,7 +88,7 @@ class JwtServiceTest {
     void testIsTokenValid_expiredToken_validUser_returnsInvalid() throws InterruptedException {
 
         String token = jwtService.generateToken(mockUser);
-        Thread.sleep(jwtExpiration + 200);
+        Thread.sleep(JWT_EXPIRATION + 200);
         assertThrows(ExpiredJwtException.class, () -> jwtService.isTokenValid(token, mockUser));
     }
 
@@ -100,8 +96,7 @@ class JwtServiceTest {
     void testIsTokenValid_expiredToken_invalidUser_returnsInvalid() throws InterruptedException {
         String token = jwtService.generateToken(mockUser);
 
-        Thread.sleep(jwtExpiration + 200);
-        when(mockUser.getUsername()).thenReturn("otheruser");
+        Thread.sleep(JWT_EXPIRATION + 200);
         assertThrows(ExpiredJwtException.class, () -> jwtService.isTokenValid(token, mockUser));
     }
 }

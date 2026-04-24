@@ -4,11 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,14 +22,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import tech.artadevs.finances.dtos.UserLoginRequestDto;
-import tech.artadevs.finances.exception.ResourceNotFoundException;
 import tech.artadevs.finances.models.User;
-import tech.artadevs.finances.repositories.UserRepository;
 
 class AuthenticationServiceTest {
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -69,37 +62,35 @@ class AuthenticationServiceTest {
     void authenticate_ShouldReturnUser_WhenCredentialsAreValid() {
         String email = "test@example.com";
         String password = "password123";
-        User user = new User()
-                .setEmail(email);
+        User user = new User().setEmail(email);
 
         UserLoginRequestDto loginRequest = new UserLoginRequestDto()
                 .setEmail(email)
                 .setPassword(password);
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(user);
 
         User result = authenticationService.authenticate(loginRequest);
 
         assertEquals(user, result);
-        verify(userRepository).findByEmail(email);
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test
-    void authenticate_ShouldThrowResourceNotFoundException_WhenUserNotFound() {
+    void authenticate_ShouldThrowBadCredentialsException_WhenCredentialsAreInvalid() {
         String email = "notfound@example.com";
-        String password = "password123";
+        String password = "wrongpassword";
         UserLoginRequestDto loginRequest = new UserLoginRequestDto()
                 .setEmail(email)
                 .setPassword(password);
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
 
-        assertThrows(ResourceNotFoundException.class, () -> authenticationService.authenticate(loginRequest));
-        verify(userRepository).findByEmail(email);
-        verifyNoInteractions(authenticationManager);
+        assertThrows(BadCredentialsException.class, () -> authenticationService.authenticate(loginRequest));
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test

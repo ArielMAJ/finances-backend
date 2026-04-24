@@ -1,12 +1,22 @@
-FROM maven:3.9.9-ibm-semeru-21-jammy
+# --- Build stage ---
+FROM maven:3.9.15-amazoncorretto-21-alpine AS builder
 
-WORKDIR /
+WORKDIR /build
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
-
+COPY pom.xml ./
 COPY src ./src
+RUN mvn package -DskipTests -B
+
+# --- Runtime stage ---
+FROM eclipse-temurin:21-jre-alpine
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+COPY --from=builder /build/target/*.jar app.jar
+
+USER appuser
 
 EXPOSE 8080
-CMD ["./mvnw", "spring-boot:run"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

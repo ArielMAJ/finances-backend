@@ -10,8 +10,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import tech.artadevs.finances.AbstractIntegrationTest;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RootControllerTest {
+class RootControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -22,6 +24,6 @@ class RootControllerTest {
         ResponseEntity<String> response = restTemplate.getForEntity("/", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().contains("<title>Swagger UI</title>"));
+        assertTrue(response.getBody().contains("Hello, World!"));
     }
 }
