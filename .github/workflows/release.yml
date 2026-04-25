@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - dev
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump-version:
+    if: "github.event.workflow_run.conclusion == 'success' && !startsWith(github.event.workflow_run.head_commit.message, 'chore: bump version')"
+    uses: ./.github/workflows/_bump-version.yml
+
+  create-release-pr:
+    needs: bump-version
+    uses: ./.github/workflows/_create-release-pr.yml
+    with:
+      version: ${{ needs.bump-version.outputs.version }}

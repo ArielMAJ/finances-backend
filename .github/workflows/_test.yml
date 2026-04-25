@@ -1,0 +1,26 @@
+name: Unit Tests
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: Run tests with coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "25"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Download dependencies
+        run: mvn dependency:go-offline -q 2>/dev/null
+
+      - name: Run tests with coverage check
+        run: mvn verify -o 2>/dev/null

@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  validate-commits:
+    uses: ./.github/workflows/_validate-commits.yml
+    with:
+      base: ${{ format('origin/{0}', github.base_ref) }}
+
+  test:
+    uses: ./.github/workflows/_test.yml

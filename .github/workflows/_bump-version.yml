@@ -1,0 +1,92 @@
+name: Bump Version
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: "New version set in pom.xml"
+        value: ${{ jobs.bump.outputs.version }}
+
+jobs:
+  bump:
+    name: Bump version from commits
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.new }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "25"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Determine bump type from commits
+        id: bump
+        run: |
+          # Analyze commits since the last version bump (or last tag, or all history)
+          LAST_BUMP=$(git log --pretty=format:"%H" --grep="^chore: bump version" -1 2>/dev/null || echo "")
+          if [ -n "$LAST_BUMP" ]; then
+            RANGE="${LAST_BUMP}..HEAD"
+          else
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LAST_TAG" ]; then
+              RANGE="${LAST_TAG}..HEAD"
+            else
+              RANGE="HEAD"
+            fi
+          fi
+
+          echo "Analyzing commits: $RANGE"
+          git log --pretty=format:"  %s" $RANGE
+
+          # MAJOR: any commit with ! after type/scope, or BREAKING CHANGE in footer
+          if git log --pretty=format:"%s%n%b" $RANGE | grep -qiE "(^[a-z]+(\(.+\))?!:)|(^BREAKING CHANGE:)|(^BREAKING-CHANGE:)"; then
+            BUMP="major"
+          # MINOR: any feat commit
+          elif git log --pretty=format:"%s" $RANGE | grep -qiE "^feat(\(.+\))?:"; then
+            BUMP="minor"
+          # PATCH: everything else
+          else
+            BUMP="patch"
+          fi
+
+          echo "type=$BUMP" >> $GITHUB_OUTPUT
+          echo "Bump type: $BUMP"
+
+      - name: Calculate new version
+        id: version
+        run: |
+          CURR=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout 2>/dev/null)
+          # Extract only MAJOR.MINOR.PATCH, stripping any pre-release suffix
+          VERSION_CORE=$(echo "$CURR" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+          MAJOR=$(echo "$VERSION_CORE" | cut -d. -f1)
+          MINOR=$(echo "$VERSION_CORE" | cut -d. -f2)
+          PATCH=$(echo "$VERSION_CORE" | cut -d. -f3)
+
+          case "${{ steps.bump.outputs.type }}" in
+            major) NEW="$((MAJOR + 1)).0.0" ;;
+            minor) NEW="${MAJOR}.$((MINOR + 1)).0" ;;
+            patch) NEW="${MAJOR}.${MINOR}.$((PATCH + 1))" ;;
+          esac
+
+          echo "current=$CURR" >> $GITHUB_OUTPUT
+          echo "new=$NEW" >> $GITHUB_OUTPUT
+          echo "Version: $CURR -> $NEW"
+
+      - name: Update pom.xml
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.new }} -DgenerateBackupPoms=false 2>/dev/null
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pom.xml
+          git commit -m "chore: bump version to ${{ steps.version.outputs.new }}"
+          git push

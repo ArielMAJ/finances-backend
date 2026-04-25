@@ -1,0 +1,42 @@
+name: Check Version
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: "Current version from pom.xml"
+        value: ${{ jobs.check-version.outputs.version }}
+
+jobs:
+  check-version:
+    name: Check version change
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.compare.outputs.version }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Compare versions
+        id: compare
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CURR=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout 2>/dev/null)
+          LATEST_TAG=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest" \
+            | jq -r '.tag_name // empty')
+          LATEST_VERSION="${LATEST_TAG#v}"
+          echo "Current version:        🚀 $CURR"
+          echo "Latest release version: ⭐️ $LATEST_VERSION"
+          echo "version=$CURR" >> $GITHUB_OUTPUT
+          if [ -z "$LATEST_VERSION" ]; then
+            echo "No previous release found. Proceeding with first deploy."
+            exit 0
+          fi
+          HIGHER=$(printf '%s\n%s\n' "$LATEST_VERSION" "$CURR" | sort -V | tail -1)
+          if [ "$CURR" = "$LATEST_VERSION" ] || [ "$HIGHER" != "$CURR" ]; then
+            echo "Version $CURR is not higher than latest release $LATEST_VERSION. Stopping."
+            exit 1
+          fi
