@@ -19,5 +19,8 @@ jobs:
           distribution: "temurin"
           cache: maven
 
+      - name: Download dependencies
+        run: mvn dependency:go-offline -q 2>/dev/null
+
       - name: Run tests with coverage check
-        run: mvn verify 2>/dev/null
+        run: mvn verify -o 2>/dev/null

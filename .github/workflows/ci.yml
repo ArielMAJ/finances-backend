@@ -2,13 +2,12 @@ name: CI
 
 on:
   pull_request:
-  push:
 
 jobs:
   validate-commits:
     uses: ./.github/workflows/_validate-commits.yml
     with:
-      base: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
+      base: ${{ format('origin/{0}', github.base_ref) }}
 
   test:
     uses: ./.github/workflows/_test.yml
