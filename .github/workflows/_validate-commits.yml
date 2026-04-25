@@ -1,0 +1,55 @@
+name: Validate Commit Messages
+
+on:
+  workflow_call:
+    inputs:
+      base:
+        description: "Base ref or SHA to diff against (e.g. origin/dev or a commit SHA)"
+        required: true
+        type: string
+
+jobs:
+  validate:
+    name: Validate conventional commits
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          BASE="${{ inputs.base }}"
+
+          # New branch push — nothing to validate
+          if echo "$BASE" | grep -qE '^0+$'; then
+            echo "New branch push — skipping commit validation."
+            exit 0
+          fi
+
+          PATTERN="^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?(!)?: .+"
+          FAILED=false
+
+          while IFS= read -r msg; do
+            [ -z "$msg" ] && continue
+            if ! echo "$msg" | grep -qiE "$PATTERN"; then
+              echo "::error::Invalid commit message: \"$msg\""
+              FAILED=true
+            else
+              echo "::notice::Valid: \"$msg\""
+            fi
+          done < <(git log --pretty=format:"%s" "$BASE"..HEAD)
+
+          if [ "$FAILED" = "true" ]; then
+            echo ""
+            echo "Commit messages must follow Conventional Commits:"
+            echo "  <type>[optional scope][optional !]: <description>"
+            echo ""
+            echo "Types: build | chore | ci | docs | feat | fix | perf | refactor | revert | style | test"
+            echo "Breaking changes: use ! after type/scope (e.g. feat!:) or BREAKING CHANGE: in the footer"
+            exit 1
+          fi
+
+          echo "All commit messages are valid."
